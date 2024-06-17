@@ -82,6 +82,10 @@ func main() {
 	v1Router.Get("/err", handlerErr)
 	// create handler that has access to the database
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
+	// create handler to get unique users and feeds from the database, uses middle ware function for user authentification
+	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
+	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
+	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
 	// nest the v1 router as its own path
 	router.Mount("/v1", v1Router)
 

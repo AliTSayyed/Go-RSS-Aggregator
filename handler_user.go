@@ -33,10 +33,15 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 		Name:      params.Name,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't create user : %v", err))
+		respondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
 		return
 	}
 
 	// if user is created this will be the final json repsonse (use our template for user not sqlc)
+	respondWithJSON(w, 201, databaseUserToUser(user))
+}
+
+// method to get a user based on their unqiue api key that was created from sql. Uses method middleware_auth.go in the main package.
+func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
