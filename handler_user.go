@@ -11,6 +11,7 @@ import (
 )
 
 // Method to defeine a http reponse handler for an apiConfig struct. Gives handler access to the databse.
+// post handler
 func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	// handler needs to take as input a json body
 	type parameters struct {
@@ -42,6 +43,7 @@ func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Reques
 }
 
 // method to get a user based on their unqiue api key that was created from sql. Uses method middleware_auth.go in the main package.
+// get handler
 func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
