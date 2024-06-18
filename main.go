@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/alitsayyed/rssaggregator/internal/database"
 	"github.com/go-chi/chi"
@@ -57,9 +58,12 @@ func main() {
 	}
 
 	// need to convert the sql.DB to a DB for the apiConfig struct so we use the database.New method
+	db := database.New(conn)
 	apiCfg := apiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
+	// call the scraper to create 10 concurrent go routines to fetch and update posts
+	go startScraping(db, 10, time.Minute)
 
 	// create new router object to handle http requests. Use the go-chi dependency from github.
 	router := chi.NewRouter()
