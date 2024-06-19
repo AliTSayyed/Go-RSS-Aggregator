@@ -14,6 +14,7 @@ import (
 // create http reponse handlers for all the feeds a user will follow
 // post handler
 func (apiCfg *apiConfig) handlerCreateFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+	// paramaters are what inputs are passed into the json body before sending the request
 	type parameters struct {
 		FeedID uuid.UUID `json:"feed_id"`
 	}

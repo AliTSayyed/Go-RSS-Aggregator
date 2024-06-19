@@ -15,7 +15,7 @@ import (
 func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	// handler needs to take as input a json body
 	type parameters struct {
-		Name string `json:"name"`
+		Name string `json:"name"` // this is a json tag that will format how the json text will be output
 	}
 
 	// need to parse the request body into the paramter struct

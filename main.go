@@ -15,36 +15,26 @@ import (
 	_ "github.com/lib/pq"
 )
 
-/*
-Purpose of this program is to build an RSS Aggregator.
-RSS strands for Really Simple Syndication
-and is an application that collects RSS feeds from multiple sources and displays them in one place.
-An RSS feed is an online file that contains information about a website's published content.
-It can include details like the content's full text or summary, publication date, author, and link.
-RSS feed's data is written in XML.
-An RSS Aggregator will collect different RSS feeds and add it to its database. Then it will automatically colellect
-all the posts from those feeds and save them into the database. Then we can view the feeds and display them when / how we want.
-*/
-
-// struct that holds a connection to a database
+// struct that holds a connection (pointer) to a database
 type apiConfig struct {
 	DB *database.Queries
 }
 
 func main() {
 
-	// download the godotenv dependency and add it to my go mod and store it locally in my vendor file.
+	// download the godotenv dependency (use go mod tidy and then go mod vendor in the terminal to store a local file of the dependencies)
 	// this module allows me to pull information from my .env file automatically instead of manually having to write a command in the terminal every time I want to run my code (main).
+	// the .env file will contain the port number for the server and the database url
 	godotenv.Load(".env")
 
-	// stores name of port from env file
+	// store the port from the env file
 	// if no port is found, use log fatal to exit the code immideately with error code 1 and a message
 	portString := os.Getenv("PORT")
 	if portString == "" {
 		log.Fatal("PORT is not found in the environment")
 	}
 
-	// stores name of the Database url from env file
+	// store the database from the env file
 	// if no DB url is found, use log fatal to exit the code immideately with error code 1 and a message
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
@@ -52,23 +42,27 @@ func main() {
 	}
 
 	// store a connection to  a database
+	// necessary to acess table values
 	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Cant' connect to databse:", err)
 	}
 
-	// need to convert the sql.DB to a DB for the apiConfig struct so we use the database.New method
+	// need to convert the sql.DB to a DB for the apiConfig struct so we use the internal database (from the command slqc generate)
+	// has one type feild which is a database
 	db := database.New(conn)
 	apiCfg := apiConfig{
 		DB: db,
 	}
+
 	// call the scraper to create 10 concurrent go routines to fetch and update posts
 	go startScraping(db, 10, time.Minute)
 
-	// create new router object to handle http requests. Use the go-chi dependency from github.
+	// create router object to handle http requests. Use the go-chi dependency from github.
 	router := chi.NewRouter()
 
 	// create ability for users to send a request through a browser with different access types
+	// give wide range of access since its on local machine
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -80,9 +74,9 @@ func main() {
 
 	// create a new router for version 1, incase anything goes wrong it is nested in the version 1 path and doesnt affect other router paths
 	v1Router := chi.NewRouter()
-	// path inside v1 router, only works with get requests at the moment healthz is path name
+	// path inside v1 router, testing if get command works
 	v1Router.Get("/healthz", handlerReadiness)
-	// path inside v1 router for handling errors.
+	// path inside v1 router for testing error output
 	v1Router.Get("/err", handlerErr)
 	// create handler that has access to the database
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
@@ -95,6 +89,7 @@ func main() {
 	// delete method has a specified feed id to delete in its path
 	v1Router.Delete("/feed_follows/{feedFollowID}", apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
 	v1Router.Get("/posts", apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUser))
+
 	// nest the v1 router as its own path
 	router.Mount("/v1", v1Router)
 

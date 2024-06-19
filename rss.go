@@ -8,6 +8,8 @@ import (
 )
 
 // will collect the xml formated data from a given RSS link
+// this is the current paramaters we are looking for in a xml file but it doesnt cover everything
+// wont work with xml files that have more paramters
 type RSSFeed struct {
 	Channel struct {
 		Title       string    `xml:"title"`

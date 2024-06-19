@@ -1,5 +1,6 @@
 package main
 
+// how we will display data/errors in json
 import (
 	"encoding/json"
 	"log"
@@ -16,6 +17,7 @@ func respondWithError(w http.ResponseWriter, code int, msg string) {
 	type errResponse struct {
 		Error string `json:"error"`
 	}
+	// responding with error is a responding with json function with a errResponse type at the end
 	respondWithJSON(w, code, errResponse{
 		Error: msg,
 	})

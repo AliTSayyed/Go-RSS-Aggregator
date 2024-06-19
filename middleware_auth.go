@@ -8,7 +8,7 @@ import (
 	"github.com/alitsayyed/rssaggregator/internal/database"
 )
 
-// instead of copy pasting the code inside the authenticated handler in "handler_user.go", create this authHandler type to 'DRY' up the code.
+// Creat authHandler type to 'DRY' up the code. Any operation that needs a user's api key will go through this method.
 type authedHandler func(http.ResponseWriter, *http.Request, database.User)
 
 // but a reponse handler can only have the first 2 paramters, so use this method to convert a user to a http handler function

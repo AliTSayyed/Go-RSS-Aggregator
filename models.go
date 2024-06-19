@@ -1,5 +1,6 @@
 package main
 
+// models will change how we want the json of our database variables to look like
 import (
 	"time"
 
@@ -8,6 +9,9 @@ import (
 )
 
 // create custom user struct with json tags instead of using the deafult names from the sqlc go code
+// convert the database type to our custom type with custom json tags
+// convert database slice to our custom type slice with json tages
+
 type User struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
