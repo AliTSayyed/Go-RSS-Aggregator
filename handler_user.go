@@ -13,7 +13,7 @@ import (
 // Method to defeine a http reponse handler for an apiConfig struct. Gives handler access to the databse.
 // post handler
 func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
-	// handler needs to take as input a json body
+	// paramaters are what inputs are passed into the json body before sending the request
 	type parameters struct {
 		Name string `json:"name"` // this is a json tag that will format how the json text will be output
 	}

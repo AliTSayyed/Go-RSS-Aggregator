@@ -7,7 +7,7 @@ An RSS feed is an online file that contains information about a website's publis
 RSS feed's data is written in XML and we will automatically collect all the xml files from those feeds and save them into a database.
 Then we can view the feeds and display them when / how we want. 
 
-(Future additons)
+(Future features)
 1. Add functionality for different publishAt formats in scraper.go.
 2. Add functionalty for different xml formats in rss.go.
 3. Create custom front end to display posts. 

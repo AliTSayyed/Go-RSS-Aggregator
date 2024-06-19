@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// scraper will be running while the server is running
+// scraper will be running while the server is running and searches for new posts every 1 minute
 
 func startScraping(
 	db *database.Queries,
@@ -21,6 +21,7 @@ func startScraping(
 ) {
 	log.Printf("Scraping on %v goroutines every %s duration", concurrency, timeBetweenRequests)
 	ticker := time.NewTicker(timeBetweenRequests)
+	// infinite for loop
 	for ; ; <-ticker.C {
 		feeds, err := db.GetNextFeedsToFetch(
 			context.Background(),
@@ -30,7 +31,7 @@ func startScraping(
 			log.Println("error fethcing feeds:", err)
 			continue
 		}
-
+		// each wg is a go routine that is passed in the scrapeFeed function
 		wg := &sync.WaitGroup{}
 		for _, feed := range feeds {
 			wg.Add(1)
@@ -63,7 +64,7 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 			description.Valid = true
 		}
 
-		// need to modify this parsing to account for various types of date publishing formats
+		// need to modify this parsing to account for various types of date publishing formats, currently only works with this time format
 		pubAt, err := time.Parse(time.RFC1123Z, item.PubDate)
 		if err != nil {
 			log.Printf("Couldn't parse date %v with err %v", item.PubDate, err)

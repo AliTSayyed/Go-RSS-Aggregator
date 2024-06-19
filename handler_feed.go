@@ -13,7 +13,7 @@ import (
 // create http reponse handlers for the feeds that people will use
 // post handler
 func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
-	// paramaters are specified from our sql file
+	// paramaters are what inputs are passed into the json body before sending the request
 	type parameters struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
